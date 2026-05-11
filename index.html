@@ -5,193 +5,158 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oracle Cloud Sign In</title>
     <style>
-        /* Общие стили */
         body {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            color: #000;
+            color: #333;
             background-color: #fff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
         }
 
-        .main-container {
-            padding: 40px 25px;
-            max-width: 450px;
-            flex-grow: 1;
-        }
-
-        /* Логотип */
-        .logo-section {
-            margin-bottom: 45px;
-        }
-
-        .logo-oracle {
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            line-height: 1;
-        }
-
-        .logo-cloud {
-            font-size: 22px;
-            font-weight: 400;
-            margin-top: 5px;
-            display: block;
-        }
-
-        /* Форма */
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .label-container {
-            display: flex;
-            align-items: center;
-            font-weight: 600;
-            font-size: 17px;
-            margin-bottom: 12px;
-        }
-
-        .help-badge {
-            background: #000;
+        /* Верхняя черная полоса */
+        .top-bar {
+            background-color: #312d2a;
             color: #fff;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 12px;
-            display: inline-flex;
+            padding: 10px 20px;
+            display: flex;
             align-items: center;
-            justify-content: center;
-            margin-left: 8px;
-            cursor: pointer;
+            font-size: 14px;
+        }
+        .top-bar-icon {
+            width: 24px;
+            height: 12px;
+            border: 2px solid #e0442c;
+            border-radius: 10px;
+            margin-right: 10px;
         }
 
-        input[type="text"] {
+        .container {
+            padding: 30px 25px;
+            max-width: 450px;
+        }
+
+        .logo-section { margin-bottom: 30px; }
+        .logo-oracle { font-size: 32px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+        .logo-cloud { font-size: 24px; display: block; margin-top: -5px; }
+
+        .account-name-label { font-size: 18px; font-weight: bold; margin-bottom: 20px; display: block; }
+        
+        /* Стили форм */
+        .form-step { display: none; }
+        .form-step.active { display: block; }
+
+        .label { font-size: 15px; color: #666; margin-bottom: 8px; display: block; }
+        .info-row { font-size: 16px; margin-bottom: 20px; font-weight: 500; }
+        .help-icon { display: inline-block; width: 16px; height: 16px; border: 1px solid #666; border-radius: 50%; text-align: center; font-size: 12px; margin-left: 5px; cursor: pointer; }
+
+        input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #858585;
+            padding: 12px;
+            border: 1px solid #006699;
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 16px;
+            margin-bottom: 15px;
             outline: none;
         }
+        input::placeholder { color: #999; }
 
-        /* Кнопки */
-        .btn-next {
-            background-color: #8c8c8c; /* Характерный серый цвет */
+        .btn-black {
+            background-color: #312d2a;
             color: white;
             border: none;
-            padding: 10px 24px;
-            border-radius: 4px;
-            font-size: 15px;
-            cursor: pointer;
-            margin-bottom: 30px;
-        }
-
-        .btn-signup {
-            background-color: transparent;
-            border: 1px solid #000;
-            padding: 8px 20px;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        /* Текст и ссылки */
-        .forgot-text {
-            font-size: 17px;
-            margin-bottom: 40px;
-        }
-
-        .forgot-text a {
-            color: #006699;
-            text-decoration: none;
-        }
-
-        .divider {
-            border: 0;
-            border-top: 1px solid #e0e0e0;
-            margin: 40px 0;
-        }
-
-        .signup-section h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        /* Нижний промо-баннер */
-        .promo-footer {
-            background: linear-gradient(135deg, #164032 0%, #25614d 100%);
-            color: white;
-            padding: 40px 25px;
-        }
-
-        .promo-footer h2 {
-            font-size: 24px;
-            margin: 0 0 15px 0;
-            line-height: 1.2;
-            font-weight: 500;
-        }
-
-        .promo-footer p {
+            padding: 14px;
+            width: 100%;
             font-size: 16px;
-            line-height: 1.5;
-            margin: 0;
-            opacity: 0.9;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 10px;
         }
 
-        /* Адаптив под мобильные устройства */
-        @media (max-width: 480px) {
-            .main-container {
-                padding: 30px 20px;
-            }
+        .btn-grey {
+            background-color: #8c8c8c;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 4px;
+            cursor: pointer;
         }
+
+        .link { color: #006699; text-decoration: none; display: block; margin-top: 15px; font-size: 15px; }
+        
+        .divider { border: 0; border-top: 1px solid #ddd; margin: 30px 0; }
+
+        /* Нижние ссылки */
+        .footer-links {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 13px;
+        }
+        .footer-links a { color: #006699; text-decoration: none; margin: 0 10px; border-bottom: 1px solid transparent; }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
-        <!-- Блок Логотипа -->
+    <div class="top-bar">
+        <div class="top-bar-icon"></div>
+        Oracle Cloud Infrastructure
+    </div>
+
+    <div class="container">
         <div class="logo-section">
-            <div class="logo-oracle">ORACLE</div>
-            <div class="logo-cloud">Cloud</div>
+            <span class="logo-oracle">ORACLE</span> <span class="logo-cloud">Cloud</span>
         </div>
 
-        <!-- Поле ввода -->
-        <div class="form-group">
-            <div class="label-container">
-                Cloud Account Name
-                <span class="help-badge" title="Help">?</span>
-            </div>
-            <input type="text" id="accountName" autocomplete="off">
+        <!-- ШАГ 1: Ввод имени облачного аккаунта -->
+        <div id="step1" class="form-step active">
+            <span class="account-name-label">Cloud Account Name</span>
+            <input type="text" id="cloudNameInput" placeholder="Enter cloud account name">
+            <button class="btn-grey" onclick="goToStep2()">Next</button>
+            <a href="#" class="link">Forgot your cloud account name? Open a live chat</a>
+            <hr class="divider">
+            <p>Not an Oracle Cloud customer yet?</p>
+            <button style="background:transparent; border:1px solid #000; padding:8px 20px; border-radius:4px;">Sign Up</button>
         </div>
 
-        <button class="btn-next">Next</button>
+        <!-- ШАГ 2: Вход в учетную запись (как на новом скрине) -->
+        <div id="step2" class="form-step">
+            <div class="info-row" id="displayCloudName" style="font-weight: bold;">fourseasons</div>
+            <h2 style="font-weight: normal; font-size: 22px; margin-bottom: 20px;">Вход в учетную запись Oracle Cloud</h2>
+            
+            <span class="label">Домен идентификации <span class="help-icon">i</span></span>
+            <div class="info-row">Default</div>
 
-        <p class="forgot-text">
-            Forgot your cloud account name? <a href="#">Open a live chat</a>
-        </p>
+            <span class="label">Имя пользователя</span>
+            <input type="text" placeholder="Имя пользователя или адрес электронной г.">
 
-        <hr class="divider">
+            <span class="label">Пароль</span>
+            <input type="password" placeholder="Пароль">
 
-        <!-- Секция регистрации -->
-        <div class="signup-section">
-            <h3>Not an Oracle Cloud customer yet?</h3>
-            <button class="btn-signup">Sign Up</button>
+            <a href="#" class="link" style="margin-top: -5px; margin-bottom: 20px;">Забыли пароль?</a>
+
+            <button class="btn-black">Вход</button>
+            
+            <a href="#" class="link" style="text-align: center; margin-top: 30px;">Нужна помощь со входом?</a>
         </div>
     </div>
 
-    <!-- Баннер в футере -->
-    <footer class="promo-footer">
-        <h2>AI in Action: 10 Cutting-Edge Innovations to Explore Now</h2>
-        <p>Discover 10 groundbreaking AI-driven technologies that are reshaping how organizations perform maintenance, engage</p>
-    </footer>
+    <div class="footer-links">
+        <a href="#">Условия использования</a> | <a href="#">Конфиденциальность</a>
+    </div>
 
+    <script>
+        function goToStep2() {
+            const name = document.getElementById('cloudNameInput').value;
+            if(name) {
+                document.getElementById('displayCloudName').innerText = name;
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+            } else {
+                alert("Пожалуйста, введите имя аккаунта");
+            }
+        }
+    </script>
 </body>
 </html>
