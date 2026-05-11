@@ -3,100 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JCCsmart Payment</title>
+    <title>JCCsmart | Secure Payment</title>
     <style>
+        :root {
+            --primary-color: #5c46e5;
+            --bg-color: #ffffff;
+            --text-main: #222;
+            --text-secondary: #666;
+            --input-border: #e0e0e0;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #ffffff;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #333;
         }
 
-        /* Шапка с логотипом */
+        /* Header */
         header {
             width: 100%;
             padding: 20px;
-            display: flex;
-            justify-content: flex-start;
-            box-sizing: border-box;
             border-bottom: 1px solid #f0f0f0;
+            box-sizing: border-box;
         }
+        .logo { display: flex; align-items: center; font-size: 22px; font-weight: bold; }
+        .logo span { background: #5cb85c; color: white; padding: 2px 8px; border-radius: 4px; margin-right: 5px; }
+        .logo-text { color: #777; font-weight: 400; }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .logo span {
-            background-color: #5cb85c;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-right: 5px;
-        }
-
-        .logo-text {
-            color: #777;
-            font-weight: 400;
-        }
-
-        /* Основной контейнер */
         .container {
             max-width: 400px;
             width: 90%;
+            margin-top: 50px;
             text-align: center;
-            margin-top: 80px;
         }
 
-        .illustration {
-            font-size: 80px;
-            margin-bottom: 30px;
-        }
+        /* View Management */
+        .view { display: none; }
+        .view.active { display: block; }
 
-        h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: #222;
-        }
-
-        .amount-box {
-            background-color: #f8f7ff;
+        /* Step 1: Invoice */
+        .amount-card {
+            background: #f8f7ff;
             border: 1px solid #e0daff;
-            border-radius: 15px;
-            padding: 25px;
-            margin: 25px 0;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
         }
+        .amount { font-size: 48px; font-weight: 800; color: var(--primary-color); }
+        .label { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 10px; }
 
-        .label {
-            font-size: 14px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
+        /* Step 2: Card Form */
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; font-size: 14px; margin-bottom: 8px; font-weight: 500; color: #444; }
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.3s;
         }
+        input:focus { border-color: var(--primary-color); }
+        .row { display: flex; gap: 15px; }
 
-        .amount {
-            font-size: 42px;
-            font-weight: 800;
-            color: #5c46e5; /* Фиолетовый цвет с вашего фото */
-        }
-
-        .description {
-            color: #777;
-            font-size: 15px;
-            line-height: 1.5;
-            margin-bottom: 40px;
-        }
-
-        /* Кнопка оплаты */
-        .pay-button {
-            background-color: #5c46e5;
+        /* Button */
+        .btn {
+            background: var(--primary-color);
             color: white;
             border: none;
             width: 100%;
@@ -105,46 +83,96 @@
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-            box-shadow: 0 4px 15px rgba(92, 70, 229, 0.3);
+            box-shadow: 0 4px 15px rgba(92, 70, 229, 0.2);
+            margin-top: 20px;
         }
+        .btn:hover { background: #4a38c2; }
 
-        .pay-button:hover {
-            background-color: #4a38c2;
-            transform: translateY(-2px);
-        }
-
-        .pay-button:active {
-            transform: translateY(0);
+        .secure-info {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            opacity: 0.5;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">
-            <span>JCC</span> <div class="logo-text">smart</div>
-        </div>
+        <div class="logo"><span>JCC</span><div class="logo-text">smart</div></div>
     </header>
 
     <div class="container">
-        <!-- Иконка задолженности -->
-        <div class="illustration">📑</div>
-
-        <h1>Outstanding Balance</h1>
         
-        <div class="amount-box">
-            <div class="label">Total Amount Due</div>
-            <div class="amount">200.00€</div>
+        <!-- PAGE 1: Invoice Details -->
+        <div id="view-invoice" class="view active">
+            <div style="font-size: 60px;">⚡</div>
+            <h2>Electricity Bill</h2>
+            <p style="color: #888;">Account Number: 4400 1289 90</p>
+            
+            <div class="amount-card">
+                <div class="label">Balance Due</div>
+                <div class="amount">178.90€</div>
+            </div>
+
+            <button class="btn" onclick="showView('view-card')">Pay Now</button>
         </div>
 
-        <p class="description">
-            Your electricity bill is ready for payment. <br>
-            Please settle the balance to avoid service interruption.
-        </p>
+        <!-- PAGE 2: Card Payment -->
+        <div id="view-card" class="view">
+            <h2 style="margin-bottom: 30px;">Card Details</h2>
+            
+            <div class="form-group">
+                <label>Cardholder Name</label>
+                <input type="text" placeholder="JOHN DOE" id="name">
+            </div>
 
-        <button class="pay-button">Pay Now</button>
+            <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" placeholder="0000 0000 0000 0000" id="cardnum">
+            </div>
+
+            <div class="row">
+                <div class="form-group" style="flex: 2;">
+                    <label>Expiry Date</label>
+                    <input type="text" placeholder="MM / YY" id="expiry">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>CVC</label>
+                    <input type="password" placeholder="123" id="cvc">
+                </div>
+            </div>
+
+            <button class="btn" onclick="processPayment()">Complete Payment</button>
+            <p style="font-size: 13px; color: #999; margin-top: 15px; cursor: pointer;" onclick="showView('view-invoice')">← Go back</p>
+        </div>
+
+        <div class="secure-info">
+            <span>🔒 SSL Encrypted</span>
+            <span>💳 PCI Compliant</span>
+        </div>
     </div>
+
+    <script>
+        // Функция переключения страниц
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        // Простая заглушка для кнопки "Оплатить"
+        function processPayment() {
+            const name = document.getElementById('name').value;
+            if(!name) {
+                alert('Please fill in the card details');
+                return;
+            }
+            alert('Processing your payment of 178.90€...');
+        }
+    </script>
 
 </body>
 </html>
